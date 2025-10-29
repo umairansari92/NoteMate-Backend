@@ -5,11 +5,14 @@ export const createNote = async (req, res) => {
   try {
     const { title, content, tags } = req.body;
 
+    const image = req.file ? req.file.path : null;
+
     const note = await Note.create({
       userId: req.user._id,
       title,
       content,
-      tags
+      tags,
+      image
     });
 
     res.status(201).json({
@@ -24,6 +27,7 @@ export const createNote = async (req, res) => {
     });
   }
 };
+
 
 
 // Get all notes for a user
