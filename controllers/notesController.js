@@ -51,11 +51,11 @@ export const getNotes = async (req, res) => {
 export const deleteNote = async (req, res) => {
   try {
     const { id } = req.params;
-    await Note.findByIdAndDelete(id);
-    res.json({
-      message: "Note deleted",
-      status: true
-    });
+    const deleted = await Note.findOneAndDelete({ _id: id, userId: req.user._id });
+    if (!deleted) {
+      return res.status(404).json({ message: "Note not found", status: false });
+    }
+    res.json({ message: "Note deleted", status: true });
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -101,10 +101,14 @@ export const updateNote = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content, tags } = req.body;
+    const image = req.file ? req.file.path : undefined;
+
+    const update = { title, content, tags };
+    if (image !== undefined) update.image = image;
 
     const note = await Note.findOneAndUpdate(
       { _id: id, userId: req.user._id },
-      { title, content, tags },
+      update,
       { new: true }
     );
 

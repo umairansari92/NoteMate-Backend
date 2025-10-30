@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 // Signup Controller
 export const signup = async (req, res) => {
     try {
-        const { fname, lname, age, email, password, profileImage } = req.body;
+        const { fname, lname, age, email, password } = req.body;
 
         const userExists = await User.findOne({ email });
         if (userExists) {
@@ -18,6 +18,8 @@ export const signup = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const profileImage = req.file ? req.file.path : (req.body.profileImage || "");
+
         const newUser = await User.create({
             fname,
             lname,
@@ -27,10 +29,11 @@ export const signup = async (req, res) => {
             profileImage
         });
 
+        const { password: _remove, ...safeUser } = newUser.toObject();
         res.status(201).json({
             message: "Account Created Successfully",
             status: true,
-            user: newUser
+            user: safeUser
         });
 
     } catch (error) {
@@ -64,11 +67,12 @@ export const login = async (req, res) => {
 
         const token = jwt.sign({ id: userData._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
+        const { password: _pw, ...safeUser } = userData.toObject();
         res.json({
             message: "Login successful",
             status: true,
             token,
-            user: userData
+            user: safeUser
         });
 
     } catch (error) {
