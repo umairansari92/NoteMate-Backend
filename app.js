@@ -12,10 +12,11 @@ db();
 const app = express();
 app.use(
   cors({
-    origin: ["https://notemate.vercel.app"],
+    origin: ["https://notemate-kappa.vercel.app"],
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
