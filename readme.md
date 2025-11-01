@@ -109,7 +109,7 @@ NoteMate-Backend
 
 | Method | Path             | Description       |
 | ------ | ---------------- | ----------------- |
-| POST   | `/auth/signup` | User registration |
+| POST   | `/auth/register` | User registration |
 | POST   | `/auth/login`    | User login        |
 
 #### Notes Routes (Require Auth Token)
